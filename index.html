@@ -277,6 +277,47 @@
     color: var(--primary);
   }
 
+  .popup .dday {
+    margin-top: 8px;
+    font-size: 17px;
+    color: var(--ink-muted-48);
+  }
+
+  /* 결혼식 날짜 입력 폼 */
+  .date-form {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    align-items: center;
+    margin-top: 32px;
+  }
+
+  .date-input {
+    font-family: var(--font-text);
+    font-size: 17px;
+    letter-spacing: -0.374px;
+    color: var(--ink);
+    background: var(--canvas);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 9999px;
+    padding: 12px 20px;
+    height: 44px;
+    width: 240px;
+    text-align: center;
+  }
+
+  .date-input:focus {
+    outline: 2px solid var(--primary-focus);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  .popup .hint {
+    font-size: 14px;
+    letter-spacing: -0.224px;
+    color: var(--ink-muted-48);
+  }
+
   /* 좋아 클릭 시 터지는 하트 */
   .burst-heart {
     position: fixed;
@@ -346,16 +387,35 @@
     이 질문에는 정답이 하나뿐입니다. &nbsp;·&nbsp; Made with ❤️
   </footer>
 
+  <!-- 결혼식 날짜 입력 팝업 -->
+  <div class="overlay" id="dateOverlay">
+    <div class="popup">
+      <span class="emoji">📅</span>
+      <h2>우리 결혼식은 언제가 좋을까?</h2>
+      <p class="hint">아직 정해지지 않았다면,<br>대략적인 또는 예상되는 날짜를 적어줘도 좋아요.</p>
+      <form class="date-form" id="dateForm">
+        <input class="date-input" id="weddingDateInput" type="date" required>
+        <button class="btn btn-primary" type="submit">이 날로 정했어!</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 고마워 팝업 -->
   <div class="overlay" id="overlay">
     <div class="popup">
       <span class="emoji">🥰</span>
       <h2>고마워!!</h2>
       <p>우리 행복하게 잘 살자.<br>사랑해!!</p>
       <p class="couple" id="coupleNames"></p>
+      <p class="dday" id="ddayText"></p>
     </div>
   </div>
 
 <script>
+  /* Supabase 연동은 Vercel 서버리스 함수(/api/save)가 담당.
+     SUPABASE_URL / SUPABASE_ANON_KEY는 Vercel 환경변수로 관리됨.
+     테이블 생성 SQL은 supabase_setup.sql 참고. */
+
   const introTile = document.getElementById('introTile');
   const proposeTile = document.getElementById('proposeTile');
   const nameForm = document.getElementById('nameForm');
@@ -367,8 +427,14 @@
   const noBtn = document.getElementById('noBtn');
   const yesBtn = document.getElementById('yesBtn');
   const overlay = document.getElementById('overlay');
+  const dateOverlay = document.getElementById('dateOverlay');
+  const dateForm = document.getElementById('dateForm');
+  const weddingDateInput = document.getElementById('weddingDateInput');
+  const ddayText = document.getElementById('ddayText');
 
   let gameStarted = false;
+  let groomName = '신랑';
+  let brideName = '신부';
 
   // 한글 이름 호격 조사: 받침 있으면 '아', 없으면 '야'
   function vocative(name) {
@@ -382,12 +448,12 @@
   // 이름 입력 → 게임 시작
   nameForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const groom = groomInput.value.trim() || '신랑';
-    const bride = brideInput.value.trim() || '신부';
+    groomName = groomInput.value.trim() || '신랑';
+    brideName = brideInput.value.trim() || '신부';
 
-    proposeTagline.textContent = groom + '의 진심을 담은 한 가지 질문';
-    proposeTitle.textContent = vocative(bride) + ', 나와 결혼해 줄래?';
-    coupleNames.textContent = groom + ' ❤️ ' + bride;
+    proposeTagline.textContent = groomName + '의 진심을 담은 한 가지 질문';
+    proposeTitle.textContent = vocative(brideName) + ', 나와 결혼해 줄래?';
+    coupleNames.textContent = groomName + ' ❤️ ' + brideName;
 
     introTile.classList.add('hidden');
     proposeTile.classList.remove('hidden');
@@ -483,9 +549,56 @@
     if (noBtn.classList.contains('escaped')) teleport();
   });
 
-  // 좋아!! 클릭 → 하트 폭죽 + 고마워 팝업
+  // 좋아!! 클릭 → 결혼식 날짜 입력 팝업
   yesBtn.addEventListener('click', () => {
     noBtn.style.display = 'none';
+    dateOverlay.classList.add('show');
+  });
+
+  // 날짜를 YYYY-MM-DD 로 (로컬 기준)
+  function toDateString(d) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  // 날짜 제출 → DB 저장 → 하트 폭죽 + 고마워 팝업
+  dateForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const weddingDate = weddingDateInput.value;          // YYYY-MM-DD
+    const usedAt = toDateString(new Date());             // 서비스를 사용한 날짜
+    const daysDiff = Math.round(
+      (new Date(weddingDate) - new Date(usedAt)) / (1000 * 60 * 60 * 24)
+    );
+
+    // D-Day 문구
+    if (daysDiff > 0) {
+      ddayText.textContent = '결혼식까지 ' + daysDiff + '일 남았어요! (D-' + daysDiff + ')';
+    } else if (daysDiff === 0) {
+      ddayText.textContent = '바로 오늘이 결혼식이에요!';
+    } else {
+      ddayText.textContent = '결혼식으로부터 ' + Math.abs(daysDiff) + '일이 지났어요.';
+    }
+
+    // Vercel 서버리스 함수를 통해 저장 (실패해도 프로포즈 흐름은 계속)
+    try {
+      const resp = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          groom_name: groomName,
+          bride_name: brideName,
+          wedding_date: weddingDate,
+          used_at: usedAt,
+          days_diff: daysDiff
+        })
+      });
+      if (!resp.ok) console.error('저장 실패:', await resp.text());
+    } catch (err) {
+      console.error('저장 실패:', err);
+    }
+
+    dateOverlay.classList.remove('show');
     burstHearts();
     setTimeout(() => overlay.classList.add('show'), 350);
   });
