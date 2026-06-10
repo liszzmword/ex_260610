@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>나와 결혼해 줄래?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== Design tokens — Colors.pdf / Typography.pdf / Effects.pdf ===== */
+  :root {
+    /* Primary / Secondary / Info */
+    --primary: #28CB8B;
+    --secondary: #263238;
+    --info: #2194f3;
+
+    /* Neutral */
+    --black: #263238;
+    --d-grey: #4D4D4D;
+    --grey: #717171;
+    --l-grey: #89939E;
+    --grey-blue: #ABBED1;
+    --silver: #F5F7FA;
+    --white: #FFFFFF;
+
+    /* Shade / Tint */
+    --shade-1: #43A046;
+    --shade-3: #237D31;
+    --tint-5: #E8F5E9;
+
+    /* Shadows — #ABBED1 기반 5단계 */
+    --shadow-2: 0 2px 4px rgba(171, 190, 209, 0.6);
+    --shadow-4: 0 4px 8px rgba(171, 190, 209, 0.4);
+    --shadow-8: 0 8px 16px rgba(171, 190, 209, 0.4);
+    --shadow-16: 0 16px 32px rgba(171, 190, 209, 0.3);
+
+    --font: 'Inter', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--silver);
+    color: var(--black);
+    font-family: var(--font);
+    font-size: 16px;        /* Body 2: Regular 16/24 */
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== Header — Store.pdf: 로고 좌측 / 그린 CTA 우측, 화이트 바 ===== */
+  .header {
+    flex: 0 0 auto;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 144px;     /* Guide.pdf: 144px 사이드 마진 */
+    box-shadow: var(--shadow-2);
+    z-index: 10;
+  }
+
+  .logo {
+    font-size: 20px;         /* Headline 4: Semi Bold 20/28 */
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--black);
+  }
+
+  .logo .accent { color: var(--primary); }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;               /* Guide.pdf: 24px 거터 */
+    font-size: 16px;
+    color: var(--d-grey);
+  }
+
+  .nav-links span { cursor: default; }
+
+  /* ===== Hero — Silver 캔버스, 중앙 정렬 스택 ===== */
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 24px;
+  }
+
+  .ring {
+    font-size: 80px;
+    line-height: 1;
+    margin-bottom: 32px;
+    filter: drop-shadow(0 16px 32px rgba(171, 190, 209, 0.5));
+  }
+
+  /* Tint 5 칩 + Shade 3 텍스트 배지 */
+  .badge {
+    display: inline-block;
+    background: var(--tint-5);
+    color: var(--shade-3);
+    font-size: 14px;         /* Body 3: 14/20 */
+    line-height: 1.43;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 64px;         /* Headline 1: Semi Bold 64/76 */
+    font-weight: 600;
+    line-height: 1.19;
+    color: var(--black);
+    margin-bottom: 16px;
+  }
+
+  h1 .accent { color: var(--primary); }
+
+  .lead {
+    font-size: 18px;         /* Body 1: Regular 18/28 */
+    font-weight: 400;
+    line-height: 1.56;
+    color: var(--grey);
+    margin-bottom: 32px;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* ===== Buttons.pdf — Normal 사이즈, radius 8px ===== */
+  .btn {
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: 8px;
+    padding: 14px 32px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.15s ease, color 0.15s ease;
+    touch-action: manipulation;
+  }
+
+  .btn .arrow { font-size: 18px; line-height: 1; }
+
+  /* Primary: Default → Hover(Shade 1) → Click(Shade 3) */
+  .btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+  }
+  .btn-primary:hover  { background: var(--shade-1); }
+  .btn-primary:active { background: var(--shade-3); }
+  .btn-primary:focus-visible { outline: 2px solid var(--shade-3); outline-offset: 2px; }
+
+  /* Secondary: 화이트 바탕 + 그린 보더/텍스트, Hover 시 Tint 5 */
+  .btn-secondary {
+    background: var(--white);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+  }
+  .btn-secondary:hover  { background: var(--tint-5); }
+  .btn-secondary:active { background: var(--tint-5); color: var(--shade-3); border-color: var(--shade-3); }
+  .btn-secondary:focus-visible { outline: 2px solid var(--shade-3); outline-offset: 2px; }
+
+  #noBtn { z-index: 5; }
+  #noBtn.escaped { position: fixed; box-shadow: var(--shadow-4); }
+
+  /* ===== Footer — Secondary 다크 슬레이트 ===== */
+  .footer {
+    flex: 0 0 auto;
+    background: var(--secondary);
+    color: var(--l-grey);
+    font-size: 12px;         /* Body 4: Regular 12/16 */
+    line-height: 1.33;
+    text-align: center;
+    padding: 20px 24px;
+  }
+
+  /* ===== 고마워 팝업 — 화이트 카드 + 16px #ABBED1 섀도 ===== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 50, 56, 0.4);   /* Secondary 40% */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .overlay.show { display: flex; }
+
+  .popup {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-16);
+    padding: 48px 56px;
+    text-align: center;
+    margin: 24px;
+    animation: popIn 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  @keyframes popIn {
+    0%   { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .popup .check {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--tint-5);
+    color: var(--shade-3);
+    font-size: 32px;
+    line-height: 64px;
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  .popup h2 {
+    font-size: 36px;         /* Headline 2: Semi Bold 36/44 */
+    font-weight: 600;
+    line-height: 1.22;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .popup p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--grey);
+  }
+
+  /* 좋아 클릭 시 터지는 하트 */
+  .burst-heart {
+    position: fixed;
+    font-size: 26px;
+    pointer-events: none;
+    z-index: 200;
+    animation: burst 1.3s ease-out forwards;
+  }
+
+  @keyframes burst {
+    0%   { transform: translate(0, 0) scale(0.5); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
+  }
+
+  /* ===== Responsive — H1 64 → 36 → 28 ===== */
+  @media (max-width: 1068px) {
+    .header { padding: 16px 48px; }
+    h1 { font-size: 36px; }   /* Headline 2 */
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 12px 24px; }
+    .nav-links { display: none; }
+    h1 { font-size: 28px; }   /* Headline 3: 28/36 */
+    .lead { font-size: 16px; }
+    .ring { font-size: 64px; margin-bottom: 24px; }
+    .popup { padding: 40px 32px; }
+    .popup h2 { font-size: 28px; }
+  }
+
+  @media (max-width: 419px) {
+    .buttons { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo">💍 Marry<span class="accent">Me</span></div>
+    <nav class="nav-links">
+      <span>우리의 첫 만남</span>
+      <span>함께한 시간</span>
+      <span>앞으로의 약속</span>
+    </nav>
+    <button class="btn btn-primary" id="headerYesBtn">평생 함께하기 <span class="arrow">→</span></button>
+  </header>
+
+  <main class="hero">
+    <span class="ring">💍</span>
+    <span class="badge">진심을 담은 한 가지 질문</span>
+    <h1>나와 <span class="accent">결혼</span>해 줄래?</h1>
+    <p class="lead">너와 함께하는 모든 날을 꿈꿔 왔어.<br>이제 너의 대답만 남았어.</p>
+    <div class="buttons">
+      <button class="btn btn-primary" id="yesBtn">좋아!! <span class="arrow">→</span></button>
+      <button class="btn btn-secondary" id="noBtn">싫어!!</button>
+    </div>
+  </main>
+
+  <footer class="footer">
+    이 질문에는 정답이 하나뿐입니다 · Made with 💚
+  </footer>
+
+  <div class="overlay" id="overlay">
+    <div class="popup">
+      <span class="check">✓</span>
+      <h2>고마워!!</h2>
+      <p>우리 행복하게 잘 살자.<br>사랑해!!</p>
+    </div>
+  </div>
+
+<script>
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+  const headerYesBtn = document.getElementById('headerYesBtn');
+  const overlay = document.getElementById('overlay');
+
+  const ESCAPE_DISTANCE = 160; // 마우스가 이 거리 안으로 오면 도망가기 시작 (px)
+  const MAX_SPEED = 5;         // 슬금슬금 도망가는 최대 속도 (px/frame)
+  const MARGIN = 20;           // 화면 가장자리 여백
+
+  // 버튼을 화면 안의 랜덤 위치로 이동 (모바일 터치용)
+  function teleport() {
+    const rect = noBtn.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width - MARGIN;
+    const maxY = window.innerHeight - rect.height - MARGIN;
+
+    let newX, newY;
+    // 현재 위치와 충분히 떨어진 곳으로 이동 (제자리 점프 방지)
+    do {
+      newX = MARGIN + Math.random() * (maxX - MARGIN);
+      newY = MARGIN + Math.random() * (maxY - MARGIN);
+    } while (Math.hypot(newX - rect.left, newY - rect.top) < 150);
+
+    noBtn.classList.add('escaped');
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+  }
+
+  // [PC] 마우스가 가까이 오면 반대 방향으로 슬금슬금 도망
+  let mouseX = -9999, mouseY = -9999;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function flee() {
+    const rect = noBtn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    let dx = cx - mouseX;
+    let dy = cy - mouseY;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < ESCAPE_DISTANCE && noBtn.style.display !== 'none') {
+      // 가까울수록 빨라지고, 멀어질수록 느려짐
+      const speed = MAX_SPEED * (1 - dist / ESCAPE_DISTANCE) + 1;
+      dx /= dist || 1;
+      dy /= dist || 1;
+
+      const minX = MARGIN, maxX = window.innerWidth - rect.width - MARGIN;
+      const minY = MARGIN, maxY = window.innerHeight - rect.height - MARGIN;
+      let newX = rect.left + dx * speed;
+      let newY = rect.top + dy * speed;
+
+      // 벽에 막히면 벽을 따라 미끄러지듯 빠져나감
+      if (newX < minX || newX > maxX) {
+        newX = Math.min(Math.max(newX, minX), maxX);
+        const slideY = (Math.abs(dy) > 0.1 ? Math.sign(dy) : (cy > window.innerHeight / 2 ? -1 : 1));
+        newY = rect.top + slideY * speed * 1.5;
+      }
+      if (newY < minY || newY > maxY) {
+        newY = Math.min(Math.max(newY, minY), maxY);
+        const slideX = (Math.abs(dx) > 0.1 ? Math.sign(dx) : (cx > window.innerWidth / 2 ? -1 : 1));
+        newX = rect.left + slideX * speed * 1.5;
+        newX = Math.min(Math.max(newX, minX), maxX);
+      }
+
+      noBtn.classList.add('escaped');
+      noBtn.style.left = newX + 'px';
+      noBtn.style.top = newY + 'px';
+    }
+    requestAnimationFrame(flee);
+  }
+  requestAnimationFrame(flee);
+
+  // [모바일] 터치하는 순간 순간이동 (클릭 자체가 불가능)
+  noBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    teleport();
+  }, { passive: false });
+
+  // 혹시라도 클릭이 들어오면 (키보드 등) 도망
+  noBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    teleport();
+  });
+
+  // 화면 크기가 바뀌면 버튼이 화면 밖에 있지 않도록 보정
+  window.addEventListener('resize', () => {
+    if (noBtn.classList.contains('escaped')) teleport();
+  });
+
+  // 좋아!! 클릭 → 하트 폭죽 + 고마워 팝업 (헤더 CTA도 동일)
+  function accept() {
+    noBtn.style.display = 'none';
+    burstHearts();
+    setTimeout(() => overlay.classList.add('show'), 350);
+  }
+  yesBtn.addEventListener('click', accept);
+  headerYesBtn.addEventListener('click', accept);
+
+  function burstHearts() {
+    const emojis = ['💚', '💖', '💕', '✨'];
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    for (let i = 0; i < 24; i++) {
+      const h = document.createElement('span');
+      h.className = 'burst-heart';
+      h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      h.style.left = cx + 'px';
+      h.style.top = cy + 'px';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 120 + Math.random() * 220;
+      h.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+      h.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 1300);
+    }
+  }
+</script>
+</body>
+</html>
