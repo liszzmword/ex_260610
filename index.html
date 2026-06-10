@@ -4,38 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>나와 결혼해 줄래?</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* ===== Design tokens — Colors.pdf / Typography.pdf / Effects.pdf ===== */
+  /* ===== Design tokens — DESIGN_apple.md ===== */
   :root {
-    /* Primary / Secondary / Info */
-    --primary: #28CB8B;
-    --secondary: #263238;
-    --info: #2194f3;
+    --primary: #0066cc;          /* Action Blue — 유일한 인터랙티브 컬러 */
+    --primary-focus: #0071e3;
+    --ink: #1d1d1f;
+    --ink-muted-48: #7a7a7a;
+    --hairline: #e0e0e0;
+    --canvas: #ffffff;
+    --canvas-parchment: #f5f5f7;
+    --on-primary: #ffffff;
+    --surface-black: #000000;
 
-    /* Neutral */
-    --black: #263238;
-    --d-grey: #4D4D4D;
-    --grey: #717171;
-    --l-grey: #89939E;
-    --grey-blue: #ABBED1;
-    --silver: #F5F7FA;
-    --white: #FFFFFF;
+    --font-display: 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    --font-text: 'SF Pro Text', system-ui, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 
-    /* Shade / Tint */
-    --shade-1: #43A046;
-    --shade-3: #237D31;
-    --tint-5: #E8F5E9;
-
-    /* Shadows — #ABBED1 기반 5단계 */
-    --shadow-2: 0 2px 4px rgba(171, 190, 209, 0.6);
-    --shadow-4: 0 4px 8px rgba(171, 190, 209, 0.4);
-    --shadow-8: 0 8px 16px rgba(171, 190, 209, 0.4);
-    --shadow-16: 0 16px 32px rgba(171, 190, 209, 0.3);
-
-    --font: 'Inter', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    /* 시스템 유일의 드롭섀도 — 제품 이미지 전용 */
+    --product-shadow: drop-shadow(3px 5px 30px rgba(0, 0, 0, 0.22));
   }
 
   * {
@@ -52,158 +38,189 @@
   }
 
   body {
-    background: var(--silver);
-    color: var(--black);
-    font-family: var(--font);
-    font-size: 16px;        /* Body 2: Regular 16/24 */
-    line-height: 1.5;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-text);
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.374px;
     display: flex;
     flex-direction: column;
   }
 
-  /* ===== Header — Store.pdf: 로고 좌측 / 그린 CTA 우측, 화이트 바 ===== */
-  .header {
-    flex: 0 0 auto;
-    background: var(--white);
+  /* ===== global-nav: 44px true-black bar ===== */
+  .global-nav {
+    height: 44px;
+    flex: 0 0 44px;
+    background: var(--surface-black);
+    color: #ffffff;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 16px 144px;     /* Guide.pdf: 144px 사이드 마진 */
-    box-shadow: var(--shadow-2);
-    z-index: 10;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: -0.12px;
   }
 
-  .logo {
-    font-size: 20px;         /* Headline 4: Semi Bold 20/28 */
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--black);
-  }
-
-  .logo .accent { color: var(--primary); }
-
-  .nav-links {
-    display: flex;
-    gap: 24px;               /* Guide.pdf: 24px 거터 */
-    font-size: 16px;
-    color: var(--d-grey);
-  }
-
-  .nav-links span { cursor: default; }
-
-  /* ===== Hero — Silver 캔버스, 중앙 정렬 스택 ===== */
-  .hero {
+  /* ===== hero tile: white canvas, centered stack ===== */
+  .hero-tile {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 48px 24px;
+    padding: 80px 24px;
+    background: var(--canvas);
   }
+
+  .hero-tile.hidden { display: none; }
 
   .ring {
-    font-size: 80px;
+    font-size: 88px;
     line-height: 1;
-    margin-bottom: 32px;
-    filter: drop-shadow(0 16px 32px rgba(171, 190, 209, 0.5));
+    margin-bottom: 48px;
+    /* 제품 렌더가 표면에 놓일 때만 허용되는 단 하나의 그림자 */
+    filter: var(--product-shadow);
   }
 
-  /* Tint 5 칩 + Shade 3 텍스트 배지 */
-  .badge {
-    display: inline-block;
-    background: var(--tint-5);
-    color: var(--shade-3);
-    font-size: 14px;         /* Body 3: 14/20 */
-    line-height: 1.43;
-    font-weight: 500;
-    padding: 6px 16px;
-    border-radius: 9999px;
-    margin-bottom: 16px;
+  .tagline {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.19;
+    letter-spacing: 0.231px;
+    color: var(--primary);
+    margin-bottom: 12px;
   }
 
   h1 {
-    font-size: 64px;         /* Headline 1: Semi Bold 64/76 */
+    font-family: var(--font-display);
+    font-size: 56px;
     font-weight: 600;
-    line-height: 1.19;
-    color: var(--black);
-    margin-bottom: 16px;
+    line-height: 1.07;
+    letter-spacing: -0.28px;
+    color: var(--ink);
+    margin-bottom: 17px;
   }
 
-  h1 .accent { color: var(--primary); }
-
   .lead {
-    font-size: 18px;         /* Body 1: Regular 18/28 */
+    font-family: var(--font-display);
+    font-size: 28px;
     font-weight: 400;
-    line-height: 1.56;
-    color: var(--grey);
-    margin-bottom: 32px;
+    line-height: 1.14;
+    letter-spacing: 0.196px;
+    color: var(--ink-muted-48);
+    margin-bottom: 48px;
   }
 
   .buttons {
     display: flex;
-    gap: 24px;
+    gap: 17px;
     justify-content: center;
     align-items: center;
   }
 
-  /* ===== Buttons.pdf — Normal 사이즈, radius 8px ===== */
   .btn {
-    font-family: var(--font);
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.5;
-    border-radius: 8px;
-    padding: 14px 32px;
+    font-family: var(--font-text);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.374px;
+    border-radius: 9999px;
+    padding: 14px 28px;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.15s ease, color 0.15s ease;
+    min-height: 44px;
+    min-width: 44px;
+    transition: transform 0.12s ease;
     touch-action: manipulation;
   }
 
-  .btn .arrow { font-size: 18px; line-height: 1; }
+  /* 시스템 공통 마이크로 인터랙션 */
+  .btn:active {
+    transform: scale(0.95);
+  }
 
-  /* Primary: Default → Hover(Shade 1) → Click(Shade 3) */
+  .btn:focus-visible {
+    outline: 2px solid var(--primary-focus);
+    outline-offset: 2px;
+  }
+
+  /* button-primary: Action Blue pill */
   .btn-primary {
     background: var(--primary);
-    color: var(--white);
+    color: var(--on-primary);
     border: none;
   }
-  .btn-primary:hover  { background: var(--shade-1); }
-  .btn-primary:active { background: var(--shade-3); }
-  .btn-primary:focus-visible { outline: 2px solid var(--shade-3); outline-offset: 2px; }
 
-  /* Secondary: 화이트 바탕 + 그린 보더/텍스트, Hover 시 Tint 5 */
-  .btn-secondary {
-    background: var(--white);
+  /* button-secondary-pill: ghost pill */
+  .btn-ghost {
+    background: transparent;
     color: var(--primary);
     border: 1px solid var(--primary);
   }
-  .btn-secondary:hover  { background: var(--tint-5); }
-  .btn-secondary:active { background: var(--tint-5); color: var(--shade-3); border-color: var(--shade-3); }
-  .btn-secondary:focus-visible { outline: 2px solid var(--shade-3); outline-offset: 2px; }
 
   #noBtn { z-index: 5; }
-  #noBtn.escaped { position: fixed; box-shadow: var(--shadow-4); }
 
-  /* ===== Footer — Secondary 다크 슬레이트 ===== */
-  .footer {
-    flex: 0 0 auto;
-    background: var(--secondary);
-    color: var(--l-grey);
-    font-size: 12px;         /* Body 4: Regular 12/16 */
-    line-height: 1.33;
-    text-align: center;
-    padding: 20px 24px;
+  #noBtn.escaped {
+    position: fixed;
+    background: var(--canvas);
   }
 
-  /* ===== 고마워 팝업 — 화이트 카드 + 16px #ABBED1 섀도 ===== */
+  /* ===== 이름 입력 — search-input: pill, hairline, 44px ===== */
+  .name-form {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    align-items: center;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .name-input {
+    font-family: var(--font-text);
+    font-size: 17px;
+    letter-spacing: -0.374px;
+    color: var(--ink);
+    background: var(--canvas);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 9999px;
+    padding: 12px 20px;
+    height: 44px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .name-input::placeholder { color: var(--ink-muted-48); }
+
+  .name-input:focus {
+    outline: 2px solid var(--primary-focus);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  .name-form .btn-primary { margin-top: 12px; }
+
+  /* ===== footer: parchment, fine-print ===== */
+  .footer {
+    flex: 0 0 auto;
+    background: var(--canvas-parchment);
+    color: var(--ink-muted-48);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.12px;
+    text-align: center;
+    padding: 24px;
+  }
+
+  /* ===== 고마워 팝업: frosted overlay + hairline card ===== */
   .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(38, 50, 56, 0.4);   /* Secondary 40% */
+    background: rgba(245, 245, 247, 0.8);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
     display: none;
     align-items: center;
     justify-content: center;
@@ -213,9 +230,9 @@
   .overlay.show { display: flex; }
 
   .popup {
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: var(--shadow-16);
+    background: var(--canvas);
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
     padding: 48px 56px;
     text-align: center;
     margin: 24px;
@@ -227,30 +244,37 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  .popup .check {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--tint-5);
-    color: var(--shade-3);
-    font-size: 32px;
-    line-height: 64px;
-    display: inline-block;
+  .popup .emoji {
+    font-size: 64px;
+    line-height: 1;
+    display: block;
     margin-bottom: 24px;
+    filter: var(--product-shadow);
   }
 
   .popup h2 {
-    font-size: 36px;         /* Headline 2: Semi Bold 36/44 */
+    font-family: var(--font-display);
+    font-size: 40px;
     font-weight: 600;
-    line-height: 1.22;
-    color: var(--black);
-    margin-bottom: 8px;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 12px;
   }
 
   .popup p {
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--grey);
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.374px;
+    color: var(--ink-muted-48);
+  }
+
+  .popup .couple {
+    margin-top: 17px;
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.231px;
+    color: var(--primary);
   }
 
   /* 좋아 클릭 시 터지는 하트 */
@@ -267,67 +291,108 @@
     100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
   }
 
-  /* ===== Responsive — H1 64 → 36 → 28 ===== */
+  /* ===== Responsive: hero 56 → 40 → 34 → 28 ===== */
   @media (max-width: 1068px) {
-    .header { padding: 16px 48px; }
-    h1 { font-size: 36px; }   /* Headline 2 */
+    h1 { font-size: 40px; }
+    .lead { font-size: 24px; }
   }
 
   @media (max-width: 640px) {
-    .header { padding: 12px 24px; }
-    .nav-links { display: none; }
-    h1 { font-size: 28px; }   /* Headline 3: 28/36 */
-    .lead { font-size: 16px; }
-    .ring { font-size: 64px; margin-bottom: 24px; }
+    h1 { font-size: 34px; letter-spacing: -0.374px; }
+    .lead { font-size: 21px; }
+    .hero-tile { padding: 48px 20px; }
+    .ring { font-size: 72px; margin-bottom: 32px; }
     .popup { padding: 40px 32px; }
-    .popup h2 { font-size: 28px; }
+    .popup h2 { font-size: 34px; }
   }
 
   @media (max-width: 419px) {
+    h1 { font-size: 28px; }
+    .lead { font-size: 19px; }
     .buttons { flex-direction: column; gap: 12px; }
   }
 </style>
 </head>
 <body>
 
-  <header class="header">
-    <div class="logo">💍 Marry<span class="accent">Me</span></div>
-    <nav class="nav-links">
-      <span>우리의 첫 만남</span>
-      <span>함께한 시간</span>
-      <span>앞으로의 약속</span>
-    </nav>
-    <button class="btn btn-primary" id="headerYesBtn">평생 함께하기 <span class="arrow">→</span></button>
-  </header>
+  <nav class="global-nav">A Question for You</nav>
 
-  <main class="hero">
+  <!-- 1단계: 신랑/신부 이름 입력 -->
+  <main class="hero-tile" id="introTile">
     <span class="ring">💍</span>
-    <span class="badge">진심을 담은 한 가지 질문</span>
-    <h1>나와 <span class="accent">결혼</span>해 줄래?</h1>
-    <p class="lead">너와 함께하는 모든 날을 꿈꿔 왔어.<br>이제 너의 대답만 남았어.</p>
+    <p class="tagline">시작하기 전에</p>
+    <h1>두 사람의 이름을 알려주세요.</h1>
+    <p class="lead">질문은 그다음에 시작됩니다.</p>
+    <form class="name-form" id="nameForm">
+      <input class="name-input" id="groomInput" type="text" placeholder="신랑 이름" maxlength="10" autocomplete="off">
+      <input class="name-input" id="brideInput" type="text" placeholder="신부 이름" maxlength="10" autocomplete="off">
+      <button class="btn btn-primary" type="submit">시작하기</button>
+    </form>
+  </main>
+
+  <!-- 2단계: 프로포즈 -->
+  <main class="hero-tile hidden" id="proposeTile">
+    <span class="ring">💍</span>
+    <p class="tagline" id="proposeTagline">진심을 담은 한 가지 질문</p>
+    <h1 id="proposeTitle">나와 결혼해 줄래?</h1>
+    <p class="lead">너와 함께하는 모든 날을 꿈꿔 왔어.</p>
     <div class="buttons">
-      <button class="btn btn-primary" id="yesBtn">좋아!! <span class="arrow">→</span></button>
-      <button class="btn btn-secondary" id="noBtn">싫어!!</button>
+      <button class="btn btn-primary" id="yesBtn">좋아!!</button>
+      <button class="btn btn-ghost" id="noBtn">싫어!!</button>
     </div>
   </main>
 
   <footer class="footer">
-    이 질문에는 정답이 하나뿐입니다 · Made with 💚
+    이 질문에는 정답이 하나뿐입니다. &nbsp;·&nbsp; Made with ❤️
   </footer>
 
   <div class="overlay" id="overlay">
     <div class="popup">
-      <span class="check">✓</span>
+      <span class="emoji">🥰</span>
       <h2>고마워!!</h2>
       <p>우리 행복하게 잘 살자.<br>사랑해!!</p>
+      <p class="couple" id="coupleNames"></p>
     </div>
   </div>
 
 <script>
+  const introTile = document.getElementById('introTile');
+  const proposeTile = document.getElementById('proposeTile');
+  const nameForm = document.getElementById('nameForm');
+  const groomInput = document.getElementById('groomInput');
+  const brideInput = document.getElementById('brideInput');
+  const proposeTagline = document.getElementById('proposeTagline');
+  const proposeTitle = document.getElementById('proposeTitle');
+  const coupleNames = document.getElementById('coupleNames');
   const noBtn = document.getElementById('noBtn');
   const yesBtn = document.getElementById('yesBtn');
-  const headerYesBtn = document.getElementById('headerYesBtn');
   const overlay = document.getElementById('overlay');
+
+  let gameStarted = false;
+
+  // 한글 이름 호격 조사: 받침 있으면 '아', 없으면 '야'
+  function vocative(name) {
+    const last = name.charCodeAt(name.length - 1);
+    if (last >= 0xAC00 && last <= 0xD7A3) {
+      return (last - 0xAC00) % 28 !== 0 ? name + '아' : name + '야';
+    }
+    return name; // 한글이 아니면 이름만
+  }
+
+  // 이름 입력 → 게임 시작
+  nameForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const groom = groomInput.value.trim() || '신랑';
+    const bride = brideInput.value.trim() || '신부';
+
+    proposeTagline.textContent = groom + '의 진심을 담은 한 가지 질문';
+    proposeTitle.textContent = vocative(bride) + ', 나와 결혼해 줄래?';
+    coupleNames.textContent = groom + ' ❤️ ' + bride;
+
+    introTile.classList.add('hidden');
+    proposeTile.classList.remove('hidden');
+    gameStarted = true;
+  });
 
   const ESCAPE_DISTANCE = 160; // 마우스가 이 거리 안으로 오면 도망가기 시작 (px)
   const MAX_SPEED = 5;         // 슬금슬금 도망가는 최대 속도 (px/frame)
@@ -360,6 +425,8 @@
   });
 
   function flee() {
+    if (!gameStarted) { requestAnimationFrame(flee); return; }
+
     const rect = noBtn.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -416,17 +483,15 @@
     if (noBtn.classList.contains('escaped')) teleport();
   });
 
-  // 좋아!! 클릭 → 하트 폭죽 + 고마워 팝업 (헤더 CTA도 동일)
-  function accept() {
+  // 좋아!! 클릭 → 하트 폭죽 + 고마워 팝업
+  yesBtn.addEventListener('click', () => {
     noBtn.style.display = 'none';
     burstHearts();
     setTimeout(() => overlay.classList.add('show'), 350);
-  }
-  yesBtn.addEventListener('click', accept);
-  headerYesBtn.addEventListener('click', accept);
+  });
 
   function burstHearts() {
-    const emojis = ['💚', '💖', '💕', '✨'];
+    const emojis = ['💖', '💕', '❤️', '✨'];
     const cx = window.innerWidth / 2;
     const cy = window.innerHeight / 2;
     for (let i = 0; i < 24; i++) {
