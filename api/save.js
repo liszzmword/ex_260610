@@ -17,7 +17,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '잘못된 요청입니다.' });
   }
 
-  const resp = await fetch(`${SUPABASE_URL}/rest/v1/proposals`, {
+  // 환경변수에 끝 슬래시나 /rest/v1 경로가 포함되어 있어도 동작하도록 정규화
+  const baseUrl = SUPABASE_URL.trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+
+  const resp = await fetch(`${baseUrl}/rest/v1/proposals`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
