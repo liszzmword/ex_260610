@@ -327,6 +327,56 @@
     color: var(--ink-muted-48);
   }
 
+  /* 고마워 + 홀 추천 팝업 스택 */
+  .popup-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    align-items: center;
+    margin: 24px;
+  }
+
+  .popup-stack .popup { margin: 0; }
+
+  /* 홀 추천 카드 — 클릭 가능한 보조 팝업 */
+  .popup-hall {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    padding: 20px 28px;
+    text-decoration: none;
+    cursor: pointer;
+    animation-delay: 0.15s;
+    animation-fill-mode: backwards;
+    transition: transform 0.12s ease;
+  }
+
+  .popup-hall:active { transform: scale(0.97); }
+
+  .popup-hall .hall-emoji {
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  .popup-hall .hall-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .popup-hall .hall-text strong {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.374px;
+    color: var(--ink);
+  }
+
+  .popup-hall .hall-text span {
+    font-size: 17px;
+    letter-spacing: -0.374px;
+    color: var(--primary);
+  }
+
   /* 좋아 클릭 시 터지는 하트 */
   .burst-heart {
     position: fixed;
@@ -409,14 +459,23 @@
     </div>
   </div>
 
-  <!-- 고마워 팝업 -->
+  <!-- 고마워 팝업 + 홀 추천 팝업 -->
   <div class="overlay" id="overlay">
-    <div class="popup">
-      <span class="emoji">🥰</span>
-      <h2>고마워!!</h2>
-      <p>우리 행복하게 잘 살자.<br>사랑해!!</p>
-      <p class="couple" id="coupleNames"></p>
-      <p class="dday" id="ddayText"></p>
+    <div class="popup-stack">
+      <div class="popup">
+        <span class="emoji">🥰</span>
+        <h2>고마워!!</h2>
+        <p>우리 행복하게 잘 살자.<br>사랑해!!</p>
+        <p class="couple" id="coupleNames"></p>
+        <p class="dday" id="ddayText"></p>
+      </div>
+      <a class="popup popup-hall" id="hallLink" href="https://www.skkconvention.co.kr/" target="_blank" rel="noopener">
+        <span class="hall-emoji">💒</span>
+        <span class="hall-text">
+          <strong>결혼식장은 정했나요?</strong>
+          <span>성균관컨벤션 보러가기 →</span>
+        </span>
+      </a>
     </div>
   </div>
 
@@ -610,6 +669,16 @@
     dateOverlay.classList.remove('show');
     burstHearts();
     setTimeout(() => overlay.classList.add('show'), 350);
+  });
+
+  // 홀 추천 팝업 클릭 → GA 이벤트 측정
+  document.getElementById('hallLink').addEventListener('click', () => {
+    if (typeof gtag === 'function') {
+      gtag('event', 'hall_recommend_click', {
+        hall_name: 'skkconvention',
+        link_url: 'https://www.skkconvention.co.kr/'
+      });
+    }
   });
 
   function burstHearts() {
